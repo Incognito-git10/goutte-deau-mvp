@@ -1,0 +1,15 @@
+role,statut,tjm,P0,P1,P2,P3,P4,P5,P6,jours,cout
+Chef de projet / Data Scientist lead,Interne,750,28,30,30,25,22,55,30,220,165000
+Product Owner (prévisionniste senior),Interne,650,15,10,10,20,12,28,15,110,71500
+Data Scientists (2),Interne + prestataire,700,10,50,140,20,40,70,30,360,252000
+Data Engineer,Prestataire,650,5,70,30,30,20,35,10,200,130000
+Ingénieur MLOps / DevOps,Prestataire,700,0,15,40,20,20,20,5,120,84000
+Développeurs web et mobile (2),Prestataire,600,0,0,0,160,40,40,0,240,144000
+Designer UX / UI,Prestataire,600,5,0,0,35,5,5,0,50,30000
+Météorologue expert,Interne,650,5,3,15,5,12,17,3,60,39000
+Technicien IoT,Interne,450,10,35,5,5,5,45,5,110,49500
+Testeur / QA,Prestataire,500,0,5,0,15,30,10,0,60,30000
+DPO et juriste,Interne,800,6,2,1,1,6,2,2,20,16000
+RSSI,Interne,800,3,2,0,1,7,1,1,15,12000
+Chargé de communication / panel,Interne,500,8,2,2,8,10,20,10,60,30000
+Coach agile (démarrage),Prestataire,750,15,10,5,0,0,0,0,30,22500

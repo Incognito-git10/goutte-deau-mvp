@@ -1,0 +1,33 @@
+digraph mld {
+  graph [rankdir=LR, fontname="Helvetica", fontsize=13, pad=0.3, nodesep=0.5, label="Goutte d'eau – modèle physique des données (SQLite)", labelloc=t];
+  node [shape=plain, fontname="Helvetica", fontsize=10];
+  edge [arrowhead=crow, arrowtail=tee, dir=both, color="#333333"];
+  stations [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#1f5f99"><font color="white"><b>stations</b></font></td></tr>
+    <tr><td align="left" port="pk"><u>station_id</u> TEXT PK</td></tr>
+    <tr><td align="left">nom TEXT NOT NULL</td></tr>
+    <tr><td align="left">region TEXT NOT NULL</td></tr>
+    <tr><td align="left">qualite_pluie TEXT CHECK (ok | suspect | absent)</td></tr></table>>];
+  observations [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#2e8b6e"><font color="white"><b>observations</b> (pas natif 10-30 min)</font></td></tr>
+    <tr><td align="left" port="fk"><u>station_id</u> TEXT PK, FK</td></tr>
+    <tr><td align="left"><u>dh_utc</u> TEXT PK</td></tr>
+    <tr><td align="left">temperature, pression, humidite REAL</td></tr>
+    <tr><td align="left">point_de_rosee, vent_moyen, vent_direction REAL</td></tr>
+    <tr><td align="left">pluie_1h, pluie_mm REAL</td></tr></table>>];
+  horaires [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#d9822b"><font color="white"><b>mesures_horaires</b></font></td></tr>
+    <tr><td align="left" port="fk"><u>station_id</u> TEXT PK, FK</td></tr>
+    <tr><td align="left"><u>heure_utc</u> TEXT PK + INDEX</td></tr>
+    <tr><td align="left">temperature, humidite, point_de_rosee REAL</td></tr>
+    <tr><td align="left">pression, vent_moyen, vent_direction REAL</td></tr>
+    <tr><td align="left">pluie_mm_1h REAL</td></tr></table>>];
+  entr [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+    <tr><td bgcolor="#7b4fa3"><font color="white"><b>entrainements</b></font></td></tr>
+    <tr><td align="left"><u>id</u> INTEGER PK AUTOINCREMENT</td></tr>
+    <tr><td align="left">date_execution TEXT</td></tr>
+    <tr><td align="left">modele TEXT, seuil REAL</td></tr>
+    <tr><td align="left">roc_auc, pr_auc, rappel, precision, f1, brier REAL</td></tr></table>>];
+  stations:pk -> observations:fk [label=" 1,n "];
+  stations:pk -> horaires:fk [label=" 1,n "];
+}

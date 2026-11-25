@@ -1,0 +1,46 @@
+digraph composants {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13, nodesep=0.45, ranksep=0.6, pad=0.3, compound=true,
+         label="Goutte d'eau – diagramme de composants du MVP", labelloc=t];
+  node  [shape=component, style=filled, fillcolor="#ffffff", color="#1f5f99", fontname="Helvetica", fontsize=10.5, penwidth=1.2];
+  edge  [fontname="Helvetica", fontsize=9, color="#333333", arrowhead=vee];
+
+  subgraph cluster_pres { label="Présentation – app/"; style="rounded,filled"; fillcolor="#f2f2f2"; color="#cfcfcf";
+    ui [label="streamlit_app\nformulaire date + station\ngraphique + tableau accessible"];
+  }
+  subgraph cluster_api { label="Service – api/main.py"; style="rounded,filled"; fillcolor="#f8eeee"; color="#e6c8cb";
+    routes [label="Routes FastAPI\n/prevision /stations /modele /sante"];
+    secu [label="Sécurité\nverifier_cle() · CORS · Pydantic"];
+  }
+  subgraph cluster_metier { label="Métier – paquet goutte"; style="rounded,filled"; fillcolor="#f3eef8"; color="#d6c8e6";
+    prediction [label="prediction\npredire_jour() · niveau()"];
+    entrainement [label="entrainement\ncandidats() · entrainer()\nmetriques()"];
+    features [label="features\nagreger_horaire()\nconstruire_variables()\ncontrole_pluviometres()"];
+    rapport [label="rapport\ngraphiques d'évaluation"];
+  }
+  subgraph cluster_donnees { label="Données – paquet goutte"; style="rounded,filled"; fillcolor="#eef6f2"; color="#c3dccf";
+    collecte [label="collecte\nlire_csv_infoclimat()\ntelecharger_api()"];
+    nettoyage [label="nettoyage\nnettoyer() · pluie_par_pas()"];
+    db [label="db\nschéma SQL · lecture / écriture"];
+    config [label="config\nstations, bornes, seuils"];
+  }
+  bdd [label="goutte.db (SQLite)", shape=cylinder, fillcolor="#fdf3e8", color="#d9822b"];
+  modele [label="modele_pluie.joblib\nmetriques.json", shape=note, fillcolor="#fdf3e8", color="#d9822b"];
+  infoclimat [label="API Infoclimat", shape=box, style="rounded,filled", fillcolor="#eef3f8"];
+
+  ui -> routes [label="HTTP GET /prevision"];
+  routes -> secu [arrowhead=none, style=dashed];
+  routes -> prediction;
+  prediction -> features;
+  prediction -> db;
+  prediction -> modele [label="charge"];
+  entrainement -> features;
+  entrainement -> db;
+  entrainement -> modele [label="écrit"];
+  rapport -> modele [style=dashed];
+  collecte -> infoclimat [label="HTTPS"];
+  collecte -> nettoyage;
+  collecte -> features [label="contrôle\npluviomètres"];
+  collecte -> db;
+  db -> bdd;
+  {rank=same; bdd; modele}
+}

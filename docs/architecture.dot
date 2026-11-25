@@ -1,0 +1,43 @@
+digraph architecture {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13, nodesep=0.35, ranksep=0.45, pad=0.3,
+         label="Goutte d'eau – architecture du MVP (traits pleins) et cible (pointillés)", labelloc=t];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, fillcolor="#ffffff", color="#1f5f99", penwidth=1.3];
+  edge  [fontname="Helvetica", fontsize=9, color="#333333"];
+
+  subgraph cluster_src { label="Sources"; style="rounded,filled"; fillcolor="#eef3f8"; color="#c5d3e3";
+    infoclimat [label="API open data Infoclimat\nstations StatIC + SYNOP\n(Licence Ouverte)"];
+    iot [label="Capteurs IoT pluviomètres\n(cible : LoRaWAN → MQTT)", style="rounded,dashed", color="#8a8f98"];
+  }
+  subgraph cluster_ing { label="Ingestion"; style="rounded,filled"; fillcolor="#eef6f2"; color="#c3dccf";
+    collecte [label="Collecteur Python\ngoutte.collecte\n(tâche planifiée, HTTPS + jeton)"];
+    qualite [label="Nettoyage et contrôle qualité\nbornes physiques, doublons,\npluviomètres suspects"];
+  }
+  subgraph cluster_data { label="Stockage"; style="rounded,filled"; fillcolor="#fdf3e8"; color="#ecd3b4";
+    sqlite [label="SQLite goutte.db\nstations · observations ·\nmesures_horaires · entrainements", shape=cylinder, style=filled];
+    ts [label="PostgreSQL / TimescaleDB\n+ stockage objet (cible)", shape=cylinder, style="dashed", color="#8a8f98"];
+  }
+  subgraph cluster_ml { label="Intelligence artificielle"; style="rounded,filled"; fillcolor="#f3eef8"; color="#d6c8e6";
+    features [label="Agrégation horaire\nvariables explicatives"];
+    train [label="Entraînement et évaluation\nscikit-learn (CPU)\nforêt aléatoire"];
+    modele [label="Modèle versionné\nmodele_pluie.joblib\nmetriques.json", shape=component];
+  }
+  subgraph cluster_exp { label="Exposition"; style="rounded,filled"; fillcolor="#f8eeee"; color="#e6c8cb";
+    api [label="API REST FastAPI\nGET /prevision · /stations\n/modele · /sante\nPydantic · clé API · CORS"];
+  }
+  subgraph cluster_usr { label="Utilisateurs"; style="rounded,filled"; fillcolor="#f2f2f2"; color="#d0d0d0";
+    ui [label="Interface Streamlit\n(démonstration)"];
+    apps [label="Application agriculteurs,\nsupervision collectivités (cible)", style="rounded,dashed", color="#8a8f98"];
+  }
+  github [label="GitHub\ncode · Actions CI · Projects", shape=note, fillcolor="#fafafa", color="#555555"];
+
+  infoclimat -> collecte [label="CSV"];
+  iot -> collecte [style=dashed, color="#8a8f98", label="flux"];
+  collecte -> qualite -> sqlite;
+  sqlite -> ts [style=dashed, color="#8a8f98", label="migration"];
+  sqlite -> features -> train -> modele;
+  sqlite -> api [label="lecture"];
+  modele -> api [label="chargement"];
+  api -> ui [label="JSON"];
+  api -> apps [style=dashed, color="#8a8f98", label="JSON + clé"];
+  github -> api [style=dotted, label="tests"];
+}

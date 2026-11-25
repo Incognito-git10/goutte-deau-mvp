@@ -1,0 +1,17 @@
+poste,detail,P0,P1,P2,P3,P4,P5,P6,cout
+Capteurs,Étalonnage (400 × 25 €),0,10000,0,0,0,0,0,10000
+Capteurs,Remplacement de capteurs défaillants (20 × 450 €),0,4500,0,0,0,4500,0,9000
+Capteurs,Densification ciblée (30 × 450 €),0,13500,0,0,0,0,0,13500
+Connectivité IoT,"400 × 1,5 €/mois × 11 mois",900,1200,900,900,600,1800,300,6600
+Cloud,"Entraînement (3 000 h GPU × 3,5 €)",0,0,9000,0,0,1500,0,10500
+Cloud,"Plateforme flux, calcul, API (3 500 €/mois × 9)",0,3500,3500,3500,3500,10500,7000,31500
+Cloud,Stockage (20 To × 25 €/To/mois × 11),500,1000,1000,500,500,1500,500,5500
+Postes de travail,2 stations avec GPU,8000,0,0,0,0,0,0,8000
+Logiciels,"Gestion de projet, design, supervision",6000,0,0,0,0,0,0,6000
+Diffusion,Passerelle SMS et notifications,0,0,0,1000,0,2000,0,3000
+Tests,Terminaux mobiles,0,0,0,2000,0,0,0,2000
+Sécurité,Test d'intrusion et audit externe,0,0,0,0,18000,0,0,18000
+Juridique,"Appui externe (AI Act, conventions)",3000,0,0,0,3000,0,0,6000
+Panel,Indemnisation des 50 testeurs,0,0,0,0,0,10000,0,10000
+Communication,"Lancement, ateliers, supports",2000,0,0,0,0,5000,2000,9000
+Formation,Utilisateurs et équipe,2000,0,0,0,3000,0,0,5000

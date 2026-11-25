@@ -1,0 +1,8 @@
+phase,libelle,jours,humain,autres,sous_total,provision,total
+P0,Phase 0 – Cadrage et recueil des besoins,110,74200,22400,96600,9700,106300
+P1,Phase 1 – Socle data (sprints 1 à 4),234,151900,33700,185600,18600,204200
+P2,Phase 2 – Modélisation IA (sprints 3 à 10),278,192050,14400,206450,20600,227050
+P3,Phase 3 – Produit (sprints 5 à 10),345,214850,7900,222750,22300,245050
+P4,"Phase 4 – Sécurité, conformité, recette",229,146750,28600,175350,17500,192850
+P5,Phase 5 – Pilote terrain (Kanban),348,220900,36800,257700,25800,283500
+P6,Phase 6 – Évaluation et bilan,111,74850,9800,84650,8400,93050

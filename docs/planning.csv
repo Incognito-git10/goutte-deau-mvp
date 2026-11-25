@@ -1,0 +1,21 @@
+phase,tache,debut,fin
+MVP,"Sprint A : collecte API, SQLite, nettoyage, exploration",2026-11-16,2026-11-27
+MVP,"Sprint B : modèle, API FastAPI, Streamlit, documentation",2026-11-30,2026-12-11
+MVP,Revue du MVP et décision de lancement,2026-12-14,2026-12-18
+P0,"Paramétrage des outils collaboratifs (GitHub, Tchap)",2027-01-04,2027-01-15
+P0,"Entretiens, questionnaires, ateliers",2027-01-04,2027-02-05
+P0,Cahier des charges v2 et validation COPIL,2027-01-25,2027-02-12
+P0,"Registre RGPD, lancement de l'AIPD",2027-01-18,2027-02-26
+P1,Ingestion IoT temps réel et contrôle qualité,2027-02-15,2027-03-26
+P1,"Lac de données, historique 5 ans, référentiel capteurs",2027-02-15,2027-04-09
+P2,Modèle de référence et protocole d'évaluation,2027-03-15,2027-04-09
+P2,Prévision immédiate 0-6 h et descente d'échelle 1 km,2027-04-12,2027-06-18
+P2,"MLOps : réentraînement, suivi de dérive",2027-04-19,2027-07-02
+P3,Application mobile / web (RGAA),2027-04-12,2027-07-02
+P3,Moteur d'alertes et API collectivités,2027-04-26,2027-07-02
+P4,Mode miroir et mesure RMSE / MAE,2027-06-07,2027-07-16
+P4,"Test d'intrusion, homologation, recette",2027-06-07,2027-07-16
+P5,Exploitation et améliorations en flux,2027-07-19,2027-10-15
+P5,"Retours des 50 testeurs, points mensuels",2027-07-19,2027-10-15
+P6,"Enquête de satisfaction, mesure des KPI",2027-10-11,2027-11-05
+P6,Rapport de bilan et décision de généralisation,2027-11-01,2027-11-26

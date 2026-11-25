@@ -1,0 +1,175 @@
+{
+  "date_entrainement": "2026-11-25T07:42:41+00:00",
+  "modele_retenu": "foret_aleatoire",
+  "seuil_decision": 0.11,
+  "horizon_h": 3,
+  "seuil_pluie_mm": 0.2,
+  "jeu": {
+    "lignes": 4340,
+    "positifs": 173,
+    "taux_pluie": 0.04,
+    "jours_avec_pluie": 8,
+    "stations": [
+      "00089",
+      "000NV",
+      "000OM",
+      "ME098",
+      "STATIC0001",
+      "STATIC0103",
+      "STATIC0296"
+    ],
+    "periode": [
+      "2026-09-01 00:00:00",
+      "2026-09-30 20:00:00"
+    ]
+  },
+  "candidats": {
+    "regression_logistique": {
+      "seuil": 0.59,
+      "validation_croisee": {
+        "roc_auc": 0.891,
+        "pr_auc": 0.4,
+        "rappel": 0.647,
+        "precision": 0.2,
+        "f1": 0.306,
+        "f2": 0.448,
+        "brier": 0.1007,
+        "matrice_confusion": {
+          "VN": 3720,
+          "FP": 447,
+          "FN": 61,
+          "VP": 112
+        }
+      }
+    },
+    "foret_aleatoire": {
+      "seuil": 0.11,
+      "validation_croisee": {
+        "roc_auc": 0.836,
+        "pr_auc": 0.437,
+        "rappel": 0.63,
+        "precision": 0.392,
+        "f1": 0.483,
+        "f2": 0.562,
+        "brier": 0.0285,
+        "matrice_confusion": {
+          "VN": 3998,
+          "FP": 169,
+          "FN": 64,
+          "VP": 109
+        }
+      }
+    }
+  },
+  "evaluation": {
+    "roc_auc": 0.836,
+    "pr_auc": 0.437,
+    "rappel": 0.63,
+    "precision": 0.392,
+    "f1": 0.483,
+    "f2": 0.562,
+    "brier": 0.0285,
+    "matrice_confusion": {
+      "VN": 3998,
+      "FP": 169,
+      "FN": 64,
+      "VP": 109
+    }
+  },
+  "references": {
+    "persistance": {
+      "roc_auc": 0.635,
+      "pr_auc": 0.2,
+      "rappel": 0.277,
+      "precision": 0.615,
+      "f1": 0.382,
+      "f2": 0.312,
+      "brier": 0.0357,
+      "matrice_confusion": {
+        "VN": 4137,
+        "FP": 30,
+        "FN": 125,
+        "VP": 48
+      }
+    },
+    "climatologie": {
+      "roc_auc": 0.5,
+      "pr_auc": 0.04,
+      "rappel": 0.0,
+      "precision": 0.0,
+      "f1": 0.0,
+      "f2": 0.0,
+      "brier": 0.0383,
+      "matrice_confusion": {
+        "VN": 4167,
+        "FP": 0,
+        "FN": 173,
+        "VP": 0
+      }
+    }
+  },
+  "test_temporel": {
+    "roc_auc": 0.882,
+    "pr_auc": 0.54,
+    "rappel": 0.528,
+    "precision": 0.663,
+    "f1": 0.588,
+    "f2": 0.55,
+    "brier": 0.0873,
+    "matrice_confusion": {
+      "VN": 1011,
+      "FP": 34,
+      "FN": 60,
+      "VP": 67
+    },
+    "persistance": {
+      "roc_auc": 0.665,
+      "pr_auc": 0.321,
+      "rappel": 0.346,
+      "precision": 0.721,
+      "f1": 0.468,
+      "f2": 0.387,
+      "brier": 0.0853,
+      "matrice_confusion": {
+        "VN": 1028,
+        "FP": 17,
+        "FN": 83,
+        "VP": 44
+      }
+    }
+  },
+  "importance_variables": {
+    "pluie_region_1h": 0.278,
+    "nb_stations_pluie": 0.208,
+    "pluie_mm_1h": 0.082,
+    "pluie_mm_3h_passees": 0.067,
+    "pression": 0.064,
+    "tendance_pression_region": 0.057,
+    "tendance_pression_3h": 0.056,
+    "heure_sin": 0.037,
+    "humidite": 0.036,
+    "ecart_rosee": 0.03,
+    "temperature": 0.028,
+    "vent_moyen": 0.017,
+    "vent_cos": 0.015,
+    "vent_sin": 0.012,
+    "heure_cos": 0.012
+  },
+  "variables": [
+    "temperature",
+    "humidite",
+    "ecart_rosee",
+    "pression",
+    "tendance_pression_3h",
+    "vent_moyen",
+    "vent_sin",
+    "vent_cos",
+    "pluie_mm_1h",
+    "pluie_mm_3h_passees",
+    "heure_sin",
+    "heure_cos",
+    "pluie_region_1h",
+    "nb_stations_pluie",
+    "tendance_pression_region"
+  ]
+}
