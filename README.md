@@ -21,7 +21,17 @@ make api           # http://localhost:8000/docs  (documentation OpenAPI interact
 make ui            # http://localhost:8501       (dans un second terminal)
 ```
 
-Sans `make` :
+Sous Windows, sans `make` : double-cliquer dans l'ordre sur les scripts du dossier `windows/`.
+
+| Script | Rôle |
+|---|---|
+| `1_installer_et_tester.bat` | crée `.venv`, installe les dépendances, collecte, entraîne, génère les graphiques, lance les tests (résultat dans `reports/resultats_tests.txt`) |
+| `2_lancer_api.bat` | lance l'API et ouvre http://localhost:8000/docs |
+| `3_lancer_interface.bat` | lance l'API et l'interface, ouvre http://localhost:8501 |
+| `4_capturer_interface.bat` | capture l'interface du 30/09/2026 dans `reports/capture_streamlit.png` (Microsoft Edge sans fenêtre) |
+| `5_publier_sur_github.bat` | relie le dépôt à un dépôt GitHub vide et pousse la branche `main` |
+
+Sans `make` (Linux, macOS) :
 
 ```bash
 export PYTHONPATH=src                                   # Windows PowerShell : $env:PYTHONPATH="src"
