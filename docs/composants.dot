@@ -37,10 +37,12 @@ digraph composants {
   entrainement -> db;
   entrainement -> modele [label="écrit"];
   rapport -> modele [style=dashed];
-  collecte -> infoclimat [label="HTTPS"];
+  infoclimat -> collecte [label="HTTPS", dir=back];
   collecte -> nettoyage;
-  collecte -> features [label="contrôle\npluviomètres"];
+  collecte -> features [label="contrôle\npluviomètres", constraint=false];
   collecte -> db;
   db -> bdd;
+  features -> collecte [style=invis];
+  rapport -> config [style=invis];
   {rank=same; bdd; modele}
 }
