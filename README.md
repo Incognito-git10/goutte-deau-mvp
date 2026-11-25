@@ -1,9 +1,11 @@
-# 💧 Goutte d'eau – MVP de prévision du risque de pluie
+# Goutte d'eau : prévision du risque de pluie (MVP)
 
-MVP du projet **Goutte d'eau** (France Météo). Pour une date donnée, il estime heure par heure la probabilité
-qu'il pleuve (≥ 0,2 mm) dans les **3 heures** suivantes, à destination des agriculteurs.
-Périmètre : une région (**Île-de-France**, 9 stations), données du réseau **Infoclimat** (Licence Ouverte),
-septembre 2026.
+Première version du projet Goutte d'eau (France Météo). On donne une date, et l'outil estime pour chaque heure
+la probabilité qu'il tombe au moins 0,2 mm de pluie dans les 3 heures qui suivent. L'idée est d'aider les
+agriculteurs à organiser leurs travaux.
+
+Pour ce MVP, je me suis limité à l'Île-de-France (9 stations) et au mois de septembre 2026, avec les données
+du réseau Infoclimat (Licence Ouverte).
 
 ```
 API Infoclimat / export CSV ─► collecte ─► nettoyage + contrôle qualité ─► SQLite ─► variables horaires ─► forêt aléatoire
@@ -21,7 +23,7 @@ make api           # http://localhost:8000/docs  (documentation OpenAPI interact
 make ui            # http://localhost:8501       (dans un second terminal)
 ```
 
-Sous Windows, sans `make` : double-cliquer dans l'ordre sur les scripts du dossier `windows/`.
+Sous Windows, pas besoin de `make` : il suffit de lancer dans l'ordre les scripts du dossier `windows/`.
 
 | Script | Rôle |
 |---|---|
@@ -30,7 +32,7 @@ Sous Windows, sans `make` : double-cliquer dans l'ordre sur les scripts du dossi
 | `3_lancer_interface.bat` | lance l'API et l'interface, ouvre http://localhost:8501 |
 | `5_publier_sur_github.bat` | relie le dépôt à un dépôt GitHub vide et pousse la branche `main` |
 
-Sans `make` (Linux, macOS) :
+Pour lancer les étapes une par une (Linux, macOS) :
 
 ```bash
 export PYTHONPATH=src                                   # Windows PowerShell : $env:PYTHONPATH="src"
@@ -42,14 +44,14 @@ uvicorn api.main:app --reload
 streamlit run app/streamlit_app.py
 ```
 
-Collecte directe depuis l'API Infoclimat (jeton gratuit, lié à l'adresse IP, à demander sur infoclimat.fr/opendata) :
+On peut aussi collecter directement depuis l'API Infoclimat. Il faut un jeton (gratuit, lié à l'adresse IP), à demander sur infoclimat.fr/opendata :
 
 ```bash
 export INFOCLIMAT_TOKEN=xxxxx
 python -m goutte.collecte --api --debut 2026-09-01 --fin 2026-09-30
 ```
 
-Avec Docker (API seule) : `docker build -t goutte . && docker run -p 8000:8000 goutte`.
+Il y a aussi une image Docker pour l'API seule : `docker build -t goutte . && docker run -p 8000:8000 goutte`.
 
 ## Arborescence
 
@@ -70,20 +72,21 @@ Avec Docker (API seule) : `docker build -t goutte . && docker run -p 8000:8000 g
 
 ## Données
 
-Sur les 29 colonnes de l'export, 11 sont lues et 10 stockées. Visibilité, ensoleillement, UV, température du sol
-ou code temps OMM sont vides à plus de 80 % ou sans lien avec la cible : ils ne sont ni stockés ni calculés.
+L'export compte 29 colonnes, mais je n'en lis que 11 et j'en stocke 10. Les autres (visibilité, ensoleillement, UV,
+température du sol, code temps OMM) sont vides à plus de 80 % ou n'ont pas de rapport avec ce qu'on cherche à prédire,
+donc je ne les garde pas.
 
-Contrôles appliqués à chaque collecte :
+À chaque collecte, les données passent par ces contrôles :
 
 * bornes physiques (température −40 à 50 °C, pression 950 à 1 060 hPa, humidité 0 à 100 %…) : valeur hors bornes → vide ;
 * doublons `(station, horodatage)` supprimés ;
 * point de rosée recalculé (formule de Magnus) quand il manque ;
 * pluie horaire prise dans `pluie_1h` (mesure du pluviomètre) ; l'intensité instantanée, qui surestime les averses
   brèves, ne sert qu'en dernier recours ;
-* **contrôle des pluviomètres** : une station sans aucune mesure de pluie est classée `absent`, une station qui reste
+* contrôle des pluviomètres : une station sans aucune mesure de pluie est classée `absent`, une station qui reste
   à 0 mm alors qu'au moins 3 voisines mesurent de la pluie deux jours différents est classée `suspect`.
-  Ces stations sont exclues de la cible et du contexte régional. En septembre 2026 : Plaisir (000TC) `absent`,
-  Argenteuil (000P7) `suspect`.
+  Ces stations ne servent ni pour la cible ni pour le contexte régional. En septembre 2026, ça concerne Plaisir
+  (000TC, `absent`) et Argenteuil (000P7, `suspect`).
 
 ### Base SQLite (`data/goutte.db`)
 
@@ -96,32 +99,40 @@ Contrôles appliqués à chaque collecte :
 
 ## Modèle
 
-* **Cible** : pluie cumulée ≥ 0,2 mm dans les 3 heures suivantes, par station.
-* **Variables (15)** : température, humidité, écart au point de rosée, pression, tendance de pression sur 3 h,
-  vent (force, direction en sin/cos), pluie de l'heure et des 3 dernières heures, heure (sin/cos),
-  pluie moyenne régionale, nombre de stations sous la pluie, tendance de pression régionale.
-* **Candidats** : régression logistique (classes pondérées) et forêt aléatoire (200 arbres, profondeur 6, sans
-  pondération pour garder des probabilités calibrées). Pas d'apprentissage profond : l'entraînement complet,
-  validation croisée comprise, prend environ 6 secondes sur un CPU.
-* **Évaluation** : validation croisée à 5 plis **groupés par jour** (aucune fuite entre heures d'une même journée)
-  et test temporel (apprentissage du 1er au 22 septembre, test du 23 au 30).
-* **Choix** : meilleure PR-AUC en validation croisée. **Seuil d'alerte** : celui qui maximise le F2 (le rappel compte
-  double : une pluie manquée coûte plus cher à l'agriculteur qu'une fausse alerte).
+La cible est simple : est-ce qu'il tombe au moins 0,2 mm de pluie à la station dans les 3 heures suivantes ?
+
+Le modèle s'appuie sur 15 variables : température, humidité, écart au point de rosée, pression et sa tendance
+sur 3 h, vent (force, et direction en sin/cos), pluie de l'heure et des 3 dernières heures, heure du jour (sin/cos),
+et trois variables de contexte régional (pluie moyenne, nombre de stations sous la pluie, tendance de pression).
+
+J'ai comparé deux modèles : une régression logistique avec classes pondérées, et une forêt aléatoire (200 arbres,
+profondeur 6). Pour la forêt, je n'ai pas pondéré les classes afin de garder des probabilités bien calibrées.
+Pas de deep learning ici, ce n'était pas utile : tout l'entraînement, validation croisée comprise, tourne en
+6 secondes environ sur un CPU.
+
+Pour l'évaluation, j'ai fait une validation croisée à 5 plis groupés par jour, pour éviter qu'une même journée se
+retrouve à la fois dans l'apprentissage et dans le test. J'ai ajouté un test temporel : apprentissage du 1er au
+22 septembre, test du 23 au 30.
+
+Le modèle retenu est celui qui a la meilleure PR-AUC en validation croisée. Pour le seuil d'alerte, j'ai pris celui
+qui maximise le F2, qui donne deux fois plus de poids au rappel : pour un agriculteur, rater une pluie coûte plus
+cher qu'une fausse alerte.
 
 Jeu d'apprentissage : 4 340 heures-station, 7 stations, 173 positifs (4,0 %), 8 jours de pluie.
 
 | | ROC-AUC | PR-AUC | Rappel | Précision | F2 | Brier |
 |---|---|---|---|---|---|---|
-| **Forêt aléatoire (retenue, seuil 0,11)** | 0,836 | **0,437** | 0,63 | **0,39** | **0,56** | **0,029** |
+| Forêt aléatoire (retenue, seuil 0,11) | 0,836 | 0,437 | 0,63 | 0,39 | 0,56 | 0,029 |
 | Régression logistique (seuil 0,59) | 0,891 | 0,400 | 0,65 | 0,20 | 0,45 | 0,101 |
 | Persistance (« il pleut, il pleuvra ») | 0,635 | 0,200 | 0,28 | 0,62 | 0,31 | 0,036 |
 | Climatologie (fréquence moyenne) | 0,500 | 0,040 | 0 | – | 0 | 0,038 |
 
-Test temporel (23–30 septembre) : forêt aléatoire ROC-AUC 0,88, PR-AUC 0,54, rappel 0,53, précision 0,66, F2 0,55,
-contre F2 0,39 pour la persistance.
+Sur le test temporel (23–30 septembre), la forêt aléatoire obtient ROC-AUC 0,88, PR-AUC 0,54, rappel 0,53, précision 0,66, F2 0,55,
+contre 0,39 en F2 pour la persistance.
 
-⚠️ Un mois de données et 8 jours de pluie : ces chiffres valident la chaîne, pas la performance opérationnelle.
-La phase 1 du projet prévoit 5 ans d'historique. Voir `docs/fiche_modele.md`.
+Attention quand même : avec un seul mois de données et 8 jours de pluie, ces chiffres montrent surtout que la chaîne
+fonctionne de bout en bout, pas que le modèle est prêt pour un usage réel. La phase 1 du projet prévoit de travailler
+sur 5 ans d'historique. Plus de détails dans `docs/fiche_modele.md`.
 
 ## API
 
@@ -151,8 +162,9 @@ Niveaux : `faible` sous le seuil d'alerte, `modéré` entre le seuil et 50 %, `�
 Codes d'erreur : 422 si la date est mal formée, 404 si la date n'est pas couverte ou la station inconnue,
 401 si la clé d'API est requise et absente.
 
-Sécurité : validation des paramètres (Pydantic), CORS limité à l'interface, méthode GET seule, clé d'API activée
-par la variable `GOUTTE_API_KEY` (en-tête `X-API-Key`), temps de traitement renvoyé dans `X-Temps-Traitement-ms`.
+Côté sécurité : les paramètres sont validés avec Pydantic, le CORS est limité à l'interface et seule la méthode GET
+est acceptée. Si la variable `GOUTTE_API_KEY` est définie, l'API demande une clé dans l'en-tête `X-API-Key`.
+Le temps de traitement est renvoyé dans l'en-tête `X-Temps-Traitement-ms`.
 
 ## Interface
 
@@ -175,8 +187,9 @@ par la variable `GOUTTE_API_KEY` (en-tête `X-API-Key`), temps de traitement ren
 
 ## Travail collaboratif
 
-Voir `CONTRIBUTING.md` : branches `feature/*` → pull request relue → `main`, intégration continue GitHub Actions,
-backlog dans GitHub Projects (modèles d'issue « user story » et « anomalie »).
+Le fonctionnement est décrit dans `CONTRIBUTING.md`. En résumé : on travaille sur des branches `feature/*`, on passe
+par une pull request relue avant de fusionner sur `main`, la CI tourne sur GitHub Actions, et le backlog est suivi
+dans GitHub Projects (modèles d'issue « user story » et « anomalie »).
 
 ## Licence et sources
 

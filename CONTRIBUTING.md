@@ -2,21 +2,29 @@
 
 ## Organisation
 
-* **Méthode** : sprints Scrum de 2 semaines (cadre hybride cycle en V + Scrum + CRISP-DM, voir le cahier des charges).
-* **Backlog** : GitHub Projects, vue tableau `À faire → En cours → En revue → Terminé`, une issue par user story.
-  Champs personnalisés : priorité MoSCoW, points, sprint, epic.
-* **Rituels** : daily de 15 min, revue et rétrospective en fin de sprint, démonstration au comité utilisateurs
-  toutes les 6 semaines.
-* **Messagerie** : Tchap (messagerie de l'État), salon `#goutte-deau-dev`. Les décisions sont reportées dans l'issue.
+On travaille en sprints Scrum de 2 semaines, dans un cadre hybride cycle en V + Scrum + CRISP-DM (le détail est
+dans le cahier des charges).
+
+Le backlog est dans GitHub Projects, en vue tableau `À faire → En cours → En revue → Terminé`, avec une issue par
+user story. On y a ajouté quelques champs : priorité MoSCoW, points, sprint et epic.
+
+Côté rituels : un daily de 15 min, une revue et une rétro en fin de sprint, et une démo au comité utilisateurs
+toutes les 6 semaines.
+
+Pour échanger, on utilise Tchap (la messagerie de l'État), salon `#goutte-deau-dev`. Quand une décision est prise,
+on la note dans l'issue concernée.
 
 ## Branches et revues
 
 1. Partir de `main` à jour : `git switch -c feature/<numero-issue>-<sujet>`.
 2. Commits courts au présent (`ajoute le contrôle des pluviomètres`), une intention par commit.
 3. Ouvrir une pull request liée à l'issue (`Closes #12`) avec le modèle fourni.
-4. Fusion sur `main` après **une relecture approuvée** et une **CI verte**. `main` est protégée : pas de push direct.
+4. On fusionne sur `main` une fois la relecture approuvée et la CI au vert. `main` est protégée, donc pas de push direct.
 
 ## Définition de « terminé »
+
+Une story est terminée quand :
+
 
 * critères d'acceptation de la story vérifiés ;
 * tests ajoutés ou mis à jour, `pytest -q` vert ;

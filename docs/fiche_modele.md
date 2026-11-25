@@ -9,7 +9,7 @@
 | Évaluation | Validation croisée par jour : ROC-AUC 0,836, PR-AUC 0,437, rappel 0,63, précision 0,39, Brier 0,029. Test temporel 23–30 sept. : F2 0,55 contre 0,39 pour la persistance |
 | Seuil d'alerte | 0,11, choisi pour maximiser le F2 (le rappel pèse double) |
 | Variables dominantes | pluie moyenne régionale, nombre de stations sous la pluie, pluie locale récente, pression |
-| Limites connues | un seul mois, 8 jours de pluie ; pas d'épisode orageux estival ; densité de stations faible ; le modèle suit une pluie déjà présente dans la région plus qu'il ne l'anticipe |
+| Limites connues | un seul mois et 8 jours de pluie ; aucun orage d'été dans les données ; peu de stations ; en pratique, le modèle repère surtout une pluie déjà présente dans la région, il l'anticipe mal |
 | Biais | stations surtout à l'ouest et au nord de la région ; Paris représenté par une station sur 2 jours |
 | Sobriété | entraînement complet ≈ 6 s sur CPU, inférence ≈ 40 ms par journée ; modèle de 0,7 Mo |
 | Réentraînement | à chaque nouvel historique mensuel, avec comparaison aux métriques de la version précédente (table `entrainements`) |
