@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 .env
 data/goutte.db
+reports/*.log
+reports/resultats_tests.txt
+reports/capture_streamlit.png

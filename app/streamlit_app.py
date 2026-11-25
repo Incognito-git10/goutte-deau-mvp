@@ -24,7 +24,7 @@ CLE = os.getenv("GOUTTE_API_KEY")
 st.set_page_config(page_title="Goutte d'eau – risque de pluie", page_icon="💧", layout="centered")
 
 # Libellés + pictogrammes : l'information ne repose jamais sur la seule couleur (RGAA 3.1)
-NIVEAUX = {"faible": ("☀️", "Risque faible"), "modéré": ("🌥️", "Risque modéré"), "élevé": ("🌧️", "Risque élevé")}
+NIVEAUX = {"faible": ("☀️", "Faible"), "modéré": ("🌥️", "Modéré"), "élevé": ("🌧️", "Élevé")}
 st.markdown("""<style>
 /* Focus clavier toujours visible (RGAA 10.7) */
 :focus-visible { outline: 3px solid #1d4ed8 !important; outline-offset: 2px; }
@@ -33,16 +33,22 @@ st.markdown("""<style>
 
 @st.cache_data(ttl=300)
 def appeler_api(jour: str, station: str | None) -> tuple[dict | None, str]:
+    """Interroge l'API. Seules les réponses de l'API sont mises en cache (5 min)."""
     params = {"date": jour}
     if station:
         params["station_id"] = station
+    r = requests.get(f"{API}/prevision", params=params, timeout=15,
+                     headers={"X-API-Key": CLE} if CLE else {})
+    if r.status_code == 404:
+        return None, r.json().get("detail", "Date indisponible")
+    r.raise_for_status()
+    return r.json(), "api"
+
+
+def obtenir_prevision(jour: str, station: str | None) -> tuple[dict | None, str]:
+    """API d'abord ; si elle ne répond pas, calcul local avec le même service (non mis en cache)."""
     try:
-        r = requests.get(f"{API}/prevision", params=params, timeout=5,
-                         headers={"X-API-Key": CLE} if CLE else {})
-        if r.status_code == 404:
-            return None, r.json().get("detail", "Date indisponible")
-        r.raise_for_status()
-        return r.json(), "api"
+        return appeler_api(jour, station)
     except requests.RequestException:
         try:
             return prediction.predire_jour(date.fromisoformat(jour), station), "local"
@@ -65,7 +71,7 @@ with st.form("recherche"):
     envoye = st.form_submit_button("Calculer le risque", type="primary")
 
 if envoye or "derniere" not in st.session_state:
-    st.session_state["derniere"] = appeler_api(jour.isoformat(), station or None)
+    st.session_state["derniere"] = obtenir_prevision(jour.isoformat(), station or None)
 
 res, source = st.session_state["derniere"]
 if res is None:
@@ -74,7 +80,7 @@ if res is None:
 
 icone, libelle = NIVEAUX[res["niveau_journalier"]]
 c1, c2, c3 = st.columns(3)
-c1.metric("Niveau du jour", f"{icone} {libelle}")
+c1.metric("Risque de pluie du jour", f"{icone} {libelle}")
 c2.metric("Probabilité maximale", f"{res['risque_journalier']:.0%}")
 c3.metric("Heures en alerte", len(res["heures_a_risque"]))
 

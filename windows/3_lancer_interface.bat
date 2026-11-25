@@ -6,7 +6,7 @@ call .venv\Scripts\activate.bat
 set PYTHONPATH=src
 set PYTHONIOENCODING=utf-8
 start "goutte-api" /min cmd /c "uvicorn api.main:app --port 8000"
-timeout /t 4 /nobreak >nul
+timeout /t 12 /nobreak >nul
 echo Interface sur http://localhost:8501  (fermer cette fenetre pour l'arreter)
 start "" http://localhost:8501
 streamlit run app\streamlit_app.py --server.port 8501 --server.headless true

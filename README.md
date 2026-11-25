@@ -28,7 +28,6 @@ Sous Windows, sans `make` : double-cliquer dans l'ordre sur les scripts du dossi
 | `1_installer_et_tester.bat` | crée `.venv`, installe les dépendances, collecte, entraîne, génère les graphiques, lance les tests (résultat dans `reports/resultats_tests.txt`) |
 | `2_lancer_api.bat` | lance l'API et ouvre http://localhost:8000/docs |
 | `3_lancer_interface.bat` | lance l'API et l'interface, ouvre http://localhost:8501 |
-| `4_capturer_interface.bat` | capture l'interface du 30/09/2026 dans `reports/capture_streamlit.png` (Microsoft Edge sans fenêtre) |
 | `5_publier_sur_github.bat` | relie le dépôt à un dépôt GitHub vide et pousse la branche `main` |
 
 Sans `make` (Linux, macOS) :
@@ -154,6 +153,10 @@ Codes d'erreur : 422 si la date est mal formée, 404 si la date n'est pas couver
 
 Sécurité : validation des paramètres (Pydantic), CORS limité à l'interface, méthode GET seule, clé d'API activée
 par la variable `GOUTTE_API_KEY` (en-tête `X-API-Key`), temps de traitement renvoyé dans `X-Temps-Traitement-ms`.
+
+## Interface
+
+![Interface Streamlit, prévision du 30/09/2026](docs/capture_streamlit.png)
 
 ## Indicateurs qualité
 
